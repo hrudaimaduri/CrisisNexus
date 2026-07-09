@@ -7,7 +7,7 @@ import { useLocations } from "@/context/locations-context";
 import { usePathname } from "next/navigation";
 
 export default function Sidebar() {
-  const { locations, removeLocation } = useLocations();
+  const { locations, removeLocation, hasLoaded } = useLocations();
   const pathname = usePathname();
 
   return (
@@ -83,7 +83,9 @@ export default function Sidebar() {
       <div className="mt-8">
         <h3 className="mb-2 text-sm font-medium">Monitored Locations</h3>
         <ul className="space-y-1">
-          {locations.length > 0 ? (
+          {!hasLoaded ? (
+            <li className="px-3 py-2 text-sm text-muted-foreground">Loading…</li>
+          ) : locations.length > 0 ? (
             locations.map((location, index) => (
               <li 
                 key={location.name} 

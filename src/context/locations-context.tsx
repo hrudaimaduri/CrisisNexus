@@ -22,6 +22,7 @@ interface LocationsContextType {
   addLocation: (locationName: string) => boolean;
   removeLocation: (locationName: string) => void;
   updateLocationDisaster: (locationName: string, disasterType: DisasterType, description?: string) => void;
+  hasLoaded: boolean;
 }
 
 // City coordinates data - used for map display
@@ -76,21 +77,26 @@ const defaultLocations: MonitoredLocation[] = [
 const LocationsContext = createContext<LocationsContextType | undefined>(undefined);
 
 export function LocationsProvider({ children }: { children: ReactNode }) {
-  // Try to load locations from localStorage, or use default locations
-  const [locations, setLocations] = useState<MonitoredLocation[]>(() => {
-    if (typeof window !== "undefined") {
-      const savedLocations = localStorage.getItem("monitoredLocations");
-      return savedLocations ? JSON.parse(savedLocations) : defaultLocations;
-    }
-    return defaultLocations;
-  });
+  // Start empty on SSR to avoid hydration mismatch; load on client after mount
+  const [locations, setLocations] = useState<MonitoredLocation[]>([]);
+  const [hasLoaded, setHasLoaded] = useState(false);
 
-  // Save locations to localStorage whenever they change
+  // Load from localStorage or defaults on client
   useEffect(() => {
     if (typeof window !== "undefined") {
+      const savedLocations = localStorage.getItem("monitoredLocations");
+      const initial = savedLocations ? JSON.parse(savedLocations) : defaultLocations;
+      setLocations(initial);
+      setHasLoaded(true);
+    }
+  }, []);
+
+  // Save locations to localStorage whenever they change (after initial load)
+  useEffect(() => {
+    if (typeof window !== "undefined" && hasLoaded) {
       localStorage.setItem("monitoredLocations", JSON.stringify(locations));
     }
-  }, [locations]);
+  }, [locations, hasLoaded]);
 
   const addLocation = (locationName: string) => {
     // Extract just the city name without state/region
@@ -166,7 +172,8 @@ export function LocationsProvider({ children }: { children: ReactNode }) {
         locations, 
         addLocation, 
         removeLocation,
-        updateLocationDisaster
+        updateLocationDisaster,
+        hasLoaded
       }}
     >
       {children}

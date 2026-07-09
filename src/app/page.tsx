@@ -35,6 +35,9 @@ export default function HomePage() {
             <Link href="/contact" className="text-sm font-medium text-muted-foreground hover:text-foreground">
               Contact
             </Link>
+            <Link href="/crisismate" className="text-sm font-medium text-muted-foreground hover:text-foreground">
+              CrisisMate
+            </Link>
           </nav>
           
           <div>
@@ -276,6 +279,7 @@ export default function HomePage() {
                 <li><Link href="/dashboard" className="text-muted-foreground hover:text-foreground">Dashboard</Link></li>
                 <li><Link href="/alerts" className="text-muted-foreground hover:text-foreground">Alerts</Link></li>
                 <li><Link href="/resources" className="text-muted-foreground hover:text-foreground">Resources</Link></li>
+                <li><Link href="/crisismate" className="text-muted-foreground hover:text-foreground">CrisisMate</Link></li>
               </ul>
             </div>
             

@@ -14,46 +14,67 @@ CrisisNexus serves as a centralized hub for crisis management, enabling organiza
 ## Features
 
 - 🚨 **Real-time Alert System**
-  - Instant notification delivery across multiple channels
+  - Instant disaster alerts and notifications
   - Priority-based alert categorization (High, Medium, Low)
-  - Customizable alert templates and protocols
-  - Automated escalation workflows
+  - Alert history and timeline tracking
+  - Proximity-based alert filtering
 
-- 📍 **Geographic Monitoring**
-  - Multi-location tracking and management
-  - Interactive map interface with real-time updates
-  - Geofencing capabilities for targeted alerts
-  - Location-specific risk assessment
+- 📍 **Interactive Disaster Map**
+  - Real-time disaster location tracking using Leaflet maps
+  - Visual representation of active disasters
+  - Multiple disaster types: floods, earthquakes, cyclones, wildfires, landslides
+  - Location-based monitoring with custom location management
 
-- 📊 **Analytics Dashboard**
-  - Comprehensive incident overview and statistics
-  - Real-time monitoring of key performance indicators
-  - Historical data analysis and trend identification
-  - Customizable reporting tools
+- 📊 **Comprehensive Dashboard**
+  - Real-time disaster statistics and metrics
+  - Active alerts feed with live updates
+  - Disaster type filtering and severity indicators
+  - Alert history with date range filtering
 
-- 🤝 **Team Collaboration**
-  - Role-based access control
-  - Integrated communication channels
-  - Task assignment and tracking
-  - Resource management system
+- 🤖 **CrisisMate AI Assistant**
+  - 24/7 disaster safety companion
+  - Step-by-step guidance during emergencies
+  - Calm, reassuring voice prompts with text-to-speech
+  - Quick tips and checklists for evacuation and emergency kits
+  - Support for earthquakes, floods, fires, cyclones, and heatwaves
 
-- 📱 **Cross-Platform Accessibility**
+- 📚 **Emergency Resources Hub**
+  - Emergency services directory
+  - First aid guides and medical information
+  - Evacuation plans and safe zones
+  - Emergency kit checklists
+  - Weather alerts and updates
+  - Medical centers locator
+  - Safety guidelines and disaster preparedness guides
+  - Community support resources
+
+- 🎨 **Modern UI/UX**
+  - Dark/Light theme support
   - Responsive design for all device types
-  - Progressive Web App (PWA) capabilities
-  - Offline functionality for critical features
-  - Cross-browser compatibility
+  - Accessible components with keyboard navigation
+  - Smooth animations and transitions
 
 ## Tech Stack
+
+### Currently In Use
 
 - **Frontend Framework**: Next.js 14 with App Router
 - **Programming Language**: TypeScript
 - **Styling Solution**: Tailwind CSS
-- **UI Components**: shadcn/ui
+- **UI Components**: shadcn/ui (Radix UI primitives)
 - **Icons**: Lucide React
-- **State Management**: React Hooks
-- **Data Fetching**: React Query
-- **Authentication**: NextAuth.js
-- **Database**: Prisma with PostgreSQL
+- **State Management**: React Hooks & Context API
+- **Data Storage**: Mock Data (In-memory storage for development)
+- **Maps**: Leaflet with React Leaflet
+- **Notifications**: Sonner (Toast notifications)
+- **Theming**: next-themes (Dark/Light mode)
+- **Date Handling**: date-fns
+- **Utilities**: clsx, tailwind-merge, class-variance-authority, nanoid
+
+### Planned/Not Yet Implemented
+
+- **Vercel KV**: Included as dependency but not currently integrated (production storage planned)
+- **External API Integrations**: Framework exists for News, YouTube, Weather, and Government APIs (requires API keys configuration)
 
 ## Getting Started
 
@@ -61,16 +82,21 @@ CrisisNexus serves as a centralized hub for crisis management, enabling organiza
 
 - Node.js 18+ (LTS version recommended)
 - npm 8+ or yarn 1.22+
-- PostgreSQL 14+ (for database)
 - Git for version control
 
 ### Environment Setup
 
-1. Create a `.env` file in the root directory:
+1. Create a `.env` file in the root directory (optional for advanced features):
 ```env
-DATABASE_URL="postgresql://user:password@localhost:5432/crisisnexus"
-NEXTAUTH_SECRET="your-secret-key"
-NEXTAUTH_URL="http://localhost:3000"
+# External API integrations (Optional - for real-time data)
+NEXT_PUBLIC_NEWS_API_KEY="your-news-api-key"
+NEXT_PUBLIC_NEWS_API_URL="your-news-api-url"
+NEXT_PUBLIC_YOUTUBE_API_KEY="your-youtube-api-key"
+NEXT_PUBLIC_YOUTUBE_CHANNEL_ID="your-channel-id"
+NEXT_PUBLIC_WEATHER_API_KEY="your-weather-api-key"
+NEXT_PUBLIC_WEATHER_API_URL="your-weather-api-url"
+
+# Note: The app works with mock data by default without any configuration
 ```
 
 ### Installation
@@ -88,20 +114,14 @@ npm install
 yarn install
 ```
 
-3. Set up the database:
-```bash
-npx prisma generate
-npx prisma db push
-```
-
-4. Run the development server:
+3. Run the development server:
 ```bash
 npm run dev
 # or
 yarn dev
 ```
 
-5. Open [http://localhost:3000](http://localhost:3000) in your browser.
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ### Build for Production
 
@@ -118,73 +138,133 @@ yarn start
 ```
 ├── src/                     # Source directory
 │   ├── app/                # Next.js 14 App Router
-│   │   ├── (auth)/        # Authentication routes
-│   │   ├── dashboard/     # Dashboard and analytics
-│   │   ├── api/          # API routes
-│   │   ├── layout.tsx    # Root layout
-│   │   └── page.tsx      # Home page
+│   │   ├── admin/         # Admin dashboard
+│   │   ├── alerts/        # Alerts page
+│   │   ├── api/           # API routes
+│   │   │   └── disasters/ # Disaster API endpoints
+│   │   ├── contact/       # Contact page
+│   │   ├── crisismate/    # CrisisMate assistant page
+│   │   ├── dashboard/     # Main dashboard
+│   │   ├── history/       # Alert history page
+│   │   ├── locations/     # Location management
+│   │   ├── resources/     # Emergency resources hub
+│   │   │   ├── community/         # Community support
+│   │   │   ├── emergency-kit/     # Emergency kit checklist
+│   │   │   ├── emergency-services/# Emergency services directory
+│   │   │   ├── evacuation/        # Evacuation plans
+│   │   │   ├── first-aid/         # First aid guides
+│   │   │   ├── medical-centers/   # Medical centers locator
+│   │   │   ├── preparedness/      # Disaster preparedness
+│   │   │   ├── safety/            # Safety guidelines
+│   │   │   └── weather/            # Weather alerts
+│   │   ├── hooks/         # Custom React hooks
+│   │   ├── layout.tsx     # Root layout
+│   │   ├── page.tsx       # Home page
+│   │   ├── globals.css    # Global styles
+│   │   ├── error.tsx      # Error boundary
+│   │   ├── loading.tsx    # Loading component
+│   │   └── not-found.tsx  # 404 page
 │   ├── components/        # React components
-│   │   ├── admin/        # Admin-related components
-│   │   ├── dashboard/    # Dashboard components
-│   │   ├── layout/       # Layout components
-│   │   └── ui/          # Reusable UI components
-│   ├── lib/              # Utility functions
-│   │   ├── api/         # API utilities
-│   │   ├── auth/        # Authentication helpers
-│   │   └── utils/       # General utilities
-│   ├── services/         # Service layer
-│   │   ├── api/         # API service functions
-│   │   └── auth/        # Authentication services
-│   ├── context/         # React Context providers
-│   ├── types/           # TypeScript definitions
-│   └── styles/          # Global styles
-├── public/              # Static assets
-├── prisma/             # Database schema
-└── config/             # Configuration files
+│   │   ├── admin/         # Admin components
+│   │   ├── crisismate/    # CrisisMate widget
+│   │   ├── dashboard/     # Dashboard components
+│   │   ├── layout/        # Layout components (header, sidebar, etc.)
+│   │   ├── locations/     # Location management components
+│   │   ├── map/           # Map components (Leaflet)
+│   │   ├── providers/     # Context providers (theme, etc.)
+│   │   ├── search/        # Search components
+│   │   └── ui/            # Reusable UI components (shadcn/ui)
+│   ├── context/           # React Context providers
+│   │   ├── locations-context.tsx  # Location state management
+│   │   └── search-context.tsx     # Search state management
+│   ├── lib/               # Utility functions
+│   │   ├── api/           # API integration utilities
+│   │   ├── constants.ts   # Application constants
+│   │   └── utils.ts       # General utilities
+│   ├── services/          # Service layer
+│   │   ├── backend-service.ts     # Backend API service
+│   │   └── disaster-service.ts   # Disaster data service
+│   └── types/             # TypeScript definitions
+│       ├── disaster.ts    # Disaster type definitions
+│       └── index.ts       # General types
+├── public/                # Static assets
+│   ├── india-map-bg.png   # Map background
+│   └── marker-icon.png    # Map markers
+├── components.json        # shadcn/ui configuration
+├── tailwind.config.ts     # Tailwind CSS configuration
+├── tsconfig.json          # TypeScript configuration
+└── next.config.js         # Next.js configuration
 ```
 
 ## Key Components
 
 ### Core Components
-- **AlertSystem**: Manages the creation, distribution, and tracking of alerts
-  - Priority-based notification system
-  - Alert templates and customization
-  - Alert history and audit trails
+- **Dashboard**: Main command center for disaster monitoring
+  - Real-time disaster statistics
+  - Active alerts feed
+  - Interactive disaster map
+  - Alert history with filtering
 
-- **LocationTracker**: Handles geographic monitoring and location management
-  - Interactive map interface
-  - Location status updates
-  - Geofencing capabilities
-  - Risk zone visualization
+- **DisasterMap**: Interactive map visualization using Leaflet
+  - Real-time disaster location markers
+  - Multiple disaster type support
+  - Custom location management
+  - Location-based filtering
 
-- **DashboardHub**: Central command center for crisis management
-  - Real-time statistics and metrics
-  - Incident timeline visualization
-  - Resource allocation tracking
-  - Team activity monitoring
+- **AlertSystem**: Alert management and tracking
+  - Priority-based alert display
+  - Alert history timeline
+  - Date range filtering
+  - Alert status tracking
+
+- **CrisisMate**: AI-powered disaster assistant
+  - Step-by-step emergency guidance
+  - Text-to-speech support
+  - Disaster-specific instructions
+  - Mental health support
 
 ### UI Components
-- **CommandBar**: Quick access to common actions and search
 - **AlertCard**: Displays alert information with priority styling
-- **StatusBadge**: Visual indicator for various status states
-- **MapView**: Interactive map component with custom controls
-- **DataGrid**: Sortable and filterable data tables
-- **Charts**: Various data visualization components
+- **AlertFeed**: Real-time alert stream component
+- **StatsCard**: Dashboard statistics display
+- **DisasterControl**: Disaster type filtering controls
+- **MapComponent**: Leaflet-based map wrapper
+- **DateRangePicker**: Date range selection for history
+- **ThemeProvider**: Dark/Light theme management
 
 ### Services
-- **APIService**: Handles all API communication
-  - Request/response handling
-  - Error management
-  - Authentication token management
-- **AuthService**: Manages authentication and authorization
-  - User session management
-  - Role-based access control
-  - Token refresh and validation
+- **DisasterService**: Manages disaster data operations
+  - Fetch active alerts
+  - Get latest updates
+  - Retrieve alert history
+  - Disaster location management
+
+- **BackendService**: Handles external API integrations
+  - Disaster data aggregation
+  - News updates fetching
+  - Alert history retrieval
 
 ### Context Providers
-- **AuthContext**: Manages authentication state
-- **ThemeContext**: Handles application theming
-- **SettingsContext**: Manages user preferences
+- **LocationsContext**: Manages user-monitored locations
+- **SearchContext**: Handles global search functionality
+- **ThemeProvider**: Manages application theming (dark/light mode)
+
+## Unused Dependencies
+
+The following packages are currently installed but not being used in the codebase and can be removed:
+
+- **@vercel/kv** - Vercel KV database client (imported but not implemented)
+- **leaflet.locatecontrol** - Leaflet location control plugin (not imported anywhere)
+- **critters** - CSS inlining tool (not configured or used)
+
+To remove these unused dependencies:
+```bash
+npm uninstall @vercel/kv leaflet.locatecontrol critters
+# or
+yarn remove @vercel/kv leaflet.locatecontrol critters
+```
+
+**Note**: Keep `@vercel/kv` if you plan to implement Vercel KV storage in the future.
 
 ## Development Guidelines
 
@@ -200,14 +280,10 @@ yarn start
 - Maintain single responsibility principle
 - Follow React best practices
 
-### Testing
+### Linting
 ```bash
-# Run unit tests
-npm run test
-# Run e2e tests
-npm run test:e2e
-# Run integration tests
-npm run test:integration
+# Run ESLint
+npm run lint
 ```
 
 ### Performance Optimization
@@ -224,10 +300,11 @@ npm run test:integration
 npm run build
 ```
 
-2. Set up environment variables on your hosting platform
-3. Configure your database connection
-4. Deploy the application
-5. Run database migrations
+2. Set up environment variables on your hosting platform (optional - for external API integrations)
+3. Deploy the application (recommended: Vercel, Netlify, or any Node.js hosting platform)
+4. Verify all environment variables are properly set if using external APIs
+
+**Note**: Currently, the application uses in-memory mock data. For production use, you'll need to implement a persistent database solution (e.g., PostgreSQL, MongoDB, or Vercel KV).
 
 ### Monitoring
 - Set up error tracking (e.g., Sentry)
@@ -237,11 +314,11 @@ npm run build
 
 ## Security
 
-- Implements RBAC (Role-Based Access Control)
-- Uses secure authentication methods
+- Secure API endpoints with proper error handling
+- Environment variable management for sensitive data
+- Input validation and sanitization
 - Follows OWASP security guidelines
-- Regular security audits
-- Data encryption at rest and in transit
+- Server-side data handling with Next.js API routes
 
 ## Support
 
@@ -260,5 +337,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - UI components from [shadcn/ui](https://ui.shadcn.com/)
 - Icons from [Lucide React](https://lucide.dev/)
 - Styled with [Tailwind CSS](https://tailwindcss.com/)
-- Maps powered by [Mapbox](https://www.mapbox.com/)
-- Database ORM by [Prisma](https://www.prisma.io/)
+- Maps powered by [Leaflet](https://leafletjs.com/) and [React Leaflet](https://react-leaflet.js.org/)
+- Toast notifications with [Sonner](https://sonner.emilkowal.ski/)
+- Theming with [next-themes](https://github.com/pacocoursey/next-themes)

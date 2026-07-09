@@ -59,7 +59,10 @@ export function DisasterMap() {
         });
       } catch (error) {
         console.error('Failed to fetch disaster locations:', error);
-        setError('Failed to load disaster locations. Please try again later.');
+        // Render an empty state instead of throwing repeated errors
+        setDisasters([]);
+        setStats({ total: 0, highPriority: 0, lastUpdate: null });
+        setError('Failed to load disaster locations. Showing map without alerts.');
       } finally {
         setIsLoading(false);
       }

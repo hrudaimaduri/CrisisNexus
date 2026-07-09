@@ -47,6 +47,14 @@ export default function Header() {
             <SearchResults />
           </div>
         </div>
+        <nav className="hidden md:flex items-center gap-6 mr-6">
+          <Link href="/" className="text-sm font-medium">Home</Link>
+          <Link href="/dashboard" className="text-sm font-medium text-muted-foreground hover:text-foreground">Dashboard</Link>
+          <Link href="/alerts" className="text-sm font-medium text-muted-foreground hover:text-foreground">Alerts</Link>
+          <Link href="/resources" className="text-sm font-medium text-muted-foreground hover:text-foreground">Resources</Link>
+          <Link href="/contact" className="text-sm font-medium text-muted-foreground hover:text-foreground">Contact</Link>
+          <Link href="/crisismate" className="text-sm font-medium text-muted-foreground hover:text-foreground">CrisisMate</Link>
+        </nav>
         <div className="flex items-center gap-4">
           <NotificationsDropdown />
           <SettingsPanel />
