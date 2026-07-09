@@ -1,4 +1,4 @@
-"use server";
+
 
 import { DisasterLocation } from '@/types/disaster';
 import { kv } from "@vercel/kv";
