@@ -2,12 +2,16 @@ import { UniqueEntityID } from "./UniqueEntityID";
 
 export abstract class Entity<T> {
 
-  protected readonly _id: UniqueEntityID;
+
   protected readonly props: T;
 
+   private readonly _id: UniqueEntityID;
+  
+
   protected constructor(props: T, id?: UniqueEntityID) {
-    this._id = id ?? new UniqueEntityID();
     this.props = props;
+    this._id = id ?? new UniqueEntityID();
+    
   }
 
   get id(): UniqueEntityID {

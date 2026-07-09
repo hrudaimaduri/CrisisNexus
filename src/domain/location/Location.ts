@@ -1,16 +1,13 @@
 import { ValueObject } from "../shared/base/ValueObject";
-import { Guard } from "../shared/guards/Guard";
 import { Result } from "../shared/result/Result";
+import { Guard } from "../shared/guards/Guard";
+
+import { Coordinates } from "./Coordinates";
+import { Address } from "./Address";
 
 interface LocationProps {
-  latitude: number;
-  longitude: number;
-  altitude?: number;
-  address?: string;
-  city?: string;
-  state?: string;
-  country?: string;
-  postalCode?: string;
+  coordinates: Coordinates;
+  address?: Address;
 }
 
 export class Location extends ValueObject<LocationProps> {
@@ -18,11 +15,13 @@ export class Location extends ValueObject<LocationProps> {
     super(props);
   }
 
-  public static create(props: LocationProps): Result<Location> {
-    const validation = Result.combine([
-      Guard.inRange(props.latitude, -90, 90, "latitude"),
-      Guard.inRange(props.longitude, -180, 180, "longitude"),
-    ]);
+  public static create(
+    props: LocationProps
+  ): Result<Location> {
+    const validation = Guard.againstNullOrUndefined(
+      props.coordinates,
+      "coordinates"
+    );
 
     if (validation.isFailure) {
       return Result.fail<Location>(validation.error!);
@@ -31,36 +30,20 @@ export class Location extends ValueObject<LocationProps> {
     return Result.ok(new Location(props));
   }
 
-  public get latitude(): number {
-    return this.props.latitude;
+  public get coordinates(): Coordinates {
+    return this.props.coordinates;
   }
 
-  public get longitude(): number {
-    return this.props.longitude;
-  }
-
-  public get altitude(): number | undefined {
-    return this.props.altitude;
-  }
-
-  public get address(): string | undefined {
+  public get address(): Address | undefined {
     return this.props.address;
   }
 
-  public get city(): string | undefined {
-    return this.props.city;
+  public get latitude(): number {
+    return this.coordinates.latitude;
   }
 
-  public get state(): string | undefined {
-    return this.props.state;
-  }
-
-  public get country(): string | undefined {
-    return this.props.country;
-  }
-
-  public get postalCode(): string | undefined {
-    return this.props.postalCode;
+  public get longitude(): number {
+    return this.coordinates.longitude;
   }
 
   public toGeoJSON() {
@@ -68,20 +51,15 @@ export class Location extends ValueObject<LocationProps> {
       type: "Point" as const,
       coordinates: [
         this.longitude,
-        this.latitude,
-        this.altitude ?? 0,
-      ],
+        this.latitude
+      ]
     };
   }
 
-  /**
-   * Calculates the distance (in kilometers) between this
-   * location and another using the Haversine formula.
-   */
   public distanceTo(other: Location): number {
     const earthRadius = 6371;
 
-    const toRadians = (degrees: number): number =>
+    const toRadians = (degrees: number) =>
       (degrees * Math.PI) / 180;
 
     const dLat = toRadians(
@@ -98,10 +76,15 @@ export class Location extends ValueObject<LocationProps> {
     const a =
       Math.sin(dLat / 2) ** 2 +
       Math.cos(lat1) *
-        Math.cos(lat2) *
-        Math.sin(dLon / 2) ** 2;
+      Math.cos(lat2) *
+      Math.sin(dLon / 2) ** 2;
 
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const c =
+      2 *
+      Math.atan2(
+        Math.sqrt(a),
+        Math.sqrt(1 - a)
+      );
 
     return earthRadius * c;
   }
