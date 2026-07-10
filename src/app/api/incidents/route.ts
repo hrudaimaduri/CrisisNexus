@@ -1,38 +1,41 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { reportIncidentUseCase } from "@/infrastructure/container";
 import { prisma } from "@/infrastructure/persistence/prisma/PrismaClient";
+
+import { ReportIncidentCommand } from "@/application/incident/commands/ReportIncidentCommand";
 
 export async function GET() {
 
   try {
 
-    const disasters =
-      await prisma.disaster.findMany({
+    const incidents =
+      await prisma.incident.findMany({
 
         include: {
+
+          disaster: true,
 
           location: {
 
             include: {
-
               coordinates: true
-
             }
 
-          }
+          },
+
+          reportedByAgency: true
 
         },
 
         orderBy: {
-
           createdAt: "desc"
-
         }
 
       });
 
     return NextResponse.json(
-      disasters,
+      incidents,
       {
         status: 200
       }
@@ -42,8 +45,7 @@ export async function GET() {
 
     return NextResponse.json(
       {
-        error:
-          "Internal Server Error"
+        error: "Internal Server Error"
       },
       {
         status: 500
@@ -61,46 +63,51 @@ export async function POST(
   try {
 
     const body =
-      await request.json();
+      (await request.json()) as ReportIncidentCommand;
 
-    const disaster =
-      await prisma.disaster.create({
+    const result =
+      await reportIncidentUseCase.execute(
+        body
+      );
 
-        data: body,
+    if (result.isFailure) {
 
-        include: {
+      return NextResponse.json(
 
-          location: {
+        {
+          error: result.error
+        },
 
-            include: {
-
-              coordinates: true
-
-            }
-
-          }
-
+        {
+          status: 400
         }
 
-      });
+      );
+
+    }
 
     return NextResponse.json(
-      disaster,
+
+      result.getValue(),
+
       {
         status: 201
       }
+
     );
 
   } catch {
 
     return NextResponse.json(
+
       {
-        error:
-          "Unable to create disaster."
+        error: "Internal Server Error"
       },
+
       {
         status: 500
       }
+
     );
 
   }

@@ -6,8 +6,8 @@ export async function GET() {
 
   try {
 
-    const disasters =
-      await prisma.disaster.findMany({
+    const agencies =
+      await prisma.agency.findMany({
 
         include: {
 
@@ -32,7 +32,7 @@ export async function GET() {
       });
 
     return NextResponse.json(
-      disasters,
+      agencies,
       {
         status: 200
       }
@@ -63,8 +63,8 @@ export async function POST(
     const body =
       await request.json();
 
-    const disaster =
-      await prisma.disaster.create({
+    const agency =
+      await prisma.agency.create({
 
         data: body,
 
@@ -85,7 +85,7 @@ export async function POST(
       });
 
     return NextResponse.json(
-      disaster,
+      agency,
       {
         status: 201
       }
@@ -96,7 +96,7 @@ export async function POST(
     return NextResponse.json(
       {
         error:
-          "Unable to create disaster."
+          "Unable to create agency."
       },
       {
         status: 500

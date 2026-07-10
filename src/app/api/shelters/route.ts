@@ -6,8 +6,8 @@ export async function GET() {
 
   try {
 
-    const disasters =
-      await prisma.disaster.findMany({
+    const shelters =
+      await prisma.shelter.findMany({
 
         include: {
 
@@ -19,7 +19,9 @@ export async function GET() {
 
             }
 
-          }
+          },
+
+          managingAgency: true
 
         },
 
@@ -32,7 +34,7 @@ export async function GET() {
       });
 
     return NextResponse.json(
-      disasters,
+      shelters,
       {
         status: 200
       }
@@ -63,8 +65,8 @@ export async function POST(
     const body =
       await request.json();
 
-    const disaster =
-      await prisma.disaster.create({
+    const shelter =
+      await prisma.shelter.create({
 
         data: body,
 
@@ -78,14 +80,16 @@ export async function POST(
 
             }
 
-          }
+          },
+
+          managingAgency: true
 
         }
 
       });
 
     return NextResponse.json(
-      disaster,
+      shelter,
       {
         status: 201
       }
@@ -96,7 +100,7 @@ export async function POST(
     return NextResponse.json(
       {
         error:
-          "Unable to create disaster."
+          "Unable to create shelter."
       },
       {
         status: 500

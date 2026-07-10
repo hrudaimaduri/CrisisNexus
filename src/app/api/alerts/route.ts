@@ -6,20 +6,13 @@ export async function GET() {
 
   try {
 
-    const disasters =
-      await prisma.disaster.findMany({
+    const alerts =
+      await prisma.alert.findMany({
 
         include: {
 
-          location: {
+          disaster: true,
 
-            include: {
-
-              coordinates: true
-
-            }
-
-          }
 
         },
 
@@ -32,7 +25,7 @@ export async function GET() {
       });
 
     return NextResponse.json(
-      disasters,
+      alerts,
       {
         status: 200
       }
@@ -42,8 +35,7 @@ export async function GET() {
 
     return NextResponse.json(
       {
-        error:
-          "Internal Server Error"
+        error: "Internal Server Error"
       },
       {
         status: 500
@@ -63,29 +55,22 @@ export async function POST(
     const body =
       await request.json();
 
-    const disaster =
-      await prisma.disaster.create({
+    const alert =
+      await prisma.alert.create({
 
         data: body,
 
         include: {
 
-          location: {
+          disaster: true,
 
-            include: {
-
-              coordinates: true
-
-            }
-
-          }
 
         }
 
       });
 
     return NextResponse.json(
-      disaster,
+      alert,
       {
         status: 201
       }
@@ -95,8 +80,7 @@ export async function POST(
 
     return NextResponse.json(
       {
-        error:
-          "Unable to create disaster."
+        error: "Unable to create alert."
       },
       {
         status: 500

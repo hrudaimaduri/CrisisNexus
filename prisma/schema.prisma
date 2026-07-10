@@ -88,6 +88,7 @@ model Agency {
 
   shelters  Shelter[]
   incidents Incident[]
+  alerts    Alert[]
 
   @@index([locationId])
 }
@@ -172,6 +173,9 @@ model Alert {
   disasterId String?
   disaster   Disaster? @relation(fields: [disasterId], references: [id])
 
+  issuingAgencyId String
+  issuingAgency   Agency @relation(fields: [issuingAgencyId], references: [id])
+
   severity Severity
 
   isActive Boolean
@@ -180,4 +184,5 @@ model Alert {
   updatedAt DateTime
 
   @@index([isActive])
+  @@index([issuingAgencyId])
 }
