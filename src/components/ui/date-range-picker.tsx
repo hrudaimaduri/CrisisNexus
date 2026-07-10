@@ -14,8 +14,8 @@ import {
 } from "@/components/ui/popover";
 
 interface DateRangePickerProps {
-  value: DateRange;
-  onChange: (value: DateRange) => void;
+  value: DateRange | undefined;
+  onChange: (value: DateRange | undefined) => void;
   className?: string;
 }
 
@@ -53,8 +53,8 @@ export function DateRangePicker({
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
           <Calendar
-            initialFocus
             mode="range"
+            required={false}
             defaultMonth={value?.from}
             selected={value}
             onSelect={onChange}

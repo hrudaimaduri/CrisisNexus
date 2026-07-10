@@ -32,19 +32,22 @@ export async function GET() {
 export async function DELETE(request: Request) {
   try {
     const { id } = await request.json();
-    const success = await deleteDisasterLocation(id);
-    if (!success) {
-      return NextResponse.json(
-        { error: 'Disaster location not found' },
-        { status: 404 }
-      );
-    }
-    return NextResponse.json({ success: true });
+
+    await deleteDisasterLocation(id);
+
+    return NextResponse.json({
+      success: true,
+    });
   } catch (error) {
-    console.error('Failed to delete disaster location:', error);
+    console.error("Failed to delete disaster location:", error);
+
     return NextResponse.json(
-      { error: 'Failed to delete disaster location' },
-      { status: 500 }
+      {
+        error: "Failed to delete disaster location",
+      },
+      {
+        status: 500,
+      }
     );
   }
-} 
+}

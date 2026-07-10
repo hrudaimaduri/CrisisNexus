@@ -17,6 +17,7 @@ interface AgencyProps {
 }
 
 export class Agency extends AggregateRoot<AgencyProps> {
+
   private constructor(
     props: AgencyProps,
     id?: UniqueEntityID
@@ -81,7 +82,17 @@ export class Agency extends AggregateRoot<AgencyProps> {
     return this.props.location;
   }
 
-  public rename(name: string): Result<void> {
+  public get createdAt(): Date {
+    return this.props.createdAt;
+  }
+
+  public get updatedAt(): Date {
+    return this.props.updatedAt;
+  }
+
+  public rename(
+    name: string
+  ): Result<void> {
 
     const validation =
       Guard.againstEmptyString(
@@ -165,4 +176,5 @@ export class Agency extends AggregateRoot<AgencyProps> {
     this.props.updatedAt =
       new Date();
   }
+
 }

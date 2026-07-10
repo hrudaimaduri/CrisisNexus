@@ -1,0 +1,183 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Severity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum DisasterStatus {
+  MONITORING
+  ACTIVE
+  CONTAINED
+  RESOLVED
+  ARCHIVED
+}
+
+enum DisasterType {
+  FLOOD
+  EARTHQUAKE
+  CYCLONE
+  FIRE
+  LANDSLIDE
+  TSUNAMI
+  HEATWAVE
+  DROUGHT
+  STORM
+  OTHER
+}
+
+enum IncidentStatus {
+  REPORTED
+  VERIFIED
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+model Coordinates {
+  id        String @id @default(cuid())
+  latitude  Float
+  longitude Float
+
+  location Location?
+
+  @@index([latitude, longitude])
+}
+
+model Location {
+  id String @id @default(cuid())
+
+  address    String?
+  city       String?
+  state      String?
+  country    String?
+  postalCode String?
+
+  coordinatesId String      @unique
+  coordinates   Coordinates @relation(fields: [coordinatesId], references: [id])
+
+  agencies  Agency[]
+  disasters Disaster[]
+  shelters  Shelter[]
+  incidents Incident[]
+}
+
+model Agency {
+  id String @id @default(cuid())
+
+  name String
+
+  description   String?
+  contactNumber String?
+  email         String?
+  website       String?
+
+  createdAt DateTime
+  updatedAt DateTime
+
+  locationId String
+  location   Location @relation(fields: [locationId], references: [id])
+
+  shelters  Shelter[]
+  incidents Incident[]
+
+  @@index([locationId])
+}
+
+model Disaster {
+  id String @id @default(cuid())
+
+  type     DisasterType
+  severity Severity
+  status   DisasterStatus
+
+  description  String?
+  sourceAgency String?
+
+  locationId String
+  location   Location @relation(fields: [locationId], references: [id])
+
+  createdAt DateTime
+  updatedAt DateTime
+
+  incidents Incident[]
+  alerts    Alert[]
+
+  @@index([type])
+  @@index([severity])
+  @@index([status])
+}
+
+model Shelter {
+  id String @id @default(cuid())
+
+  name String
+
+  locationId String
+  location   Location @relation(fields: [locationId], references: [id])
+
+  managingAgencyId String
+  managingAgency   Agency @relation(fields: [managingAgencyId], references: [id])
+
+  capacity         Int
+  currentOccupancy Int
+
+  isOpen Boolean
+
+  createdAt DateTime
+  updatedAt DateTime
+
+  @@index([isOpen])
+}
+
+model Incident {
+  id String @id @default(cuid())
+
+  disasterId String
+  disaster   Disaster @relation(fields: [disasterId], references: [id])
+
+  title       String
+  description String?
+
+  locationId String
+  location   Location @relation(fields: [locationId], references: [id])
+
+  severity Severity
+  status   IncidentStatus
+
+  reportedByAgencyId String?
+  reportedByAgency   Agency? @relation(fields: [reportedByAgencyId], references: [id])
+
+  createdAt DateTime
+  updatedAt DateTime
+
+  @@index([status])
+  @@index([severity])
+}
+
+model Alert {
+  id String @id @default(cuid())
+
+  title   String
+  message String
+
+  disasterId String?
+  disaster   Disaster? @relation(fields: [disasterId], references: [id])
+
+  severity Severity
+
+  isActive Boolean
+
+  createdAt DateTime
+  updatedAt DateTime
+
+  @@index([isActive])
+}

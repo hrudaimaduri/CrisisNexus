@@ -79,6 +79,14 @@ export class Shelter extends AggregateRoot<ShelterProps> {
     return this.props.isOpen;
   }
 
+  public get createdAt(): Date {
+    return this.props.createdAt;
+  }
+
+  public get updatedAt(): Date {
+    return this.props.updatedAt;
+  }
+
   public open(): Result<void> {
     if (this.props.isOpen) {
       return Result.ok();

@@ -103,6 +103,13 @@ export class Incident extends AggregateRoot<IncidentProps> {
     | undefined {
     return this.props.reportedByAgencyId;
   }
+  public get createdAt(): Date {
+    return this.props.createdAt;
+  }
+
+  public get updatedAt(): Date {
+    return this.props.updatedAt;
+  }
 
   public assignReportingAgency(
     agencyId: UniqueEntityID
